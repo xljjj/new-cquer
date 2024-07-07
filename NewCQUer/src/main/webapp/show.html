@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="res/style.css">
+		<script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+		<script src=" https://www.makeapie.cn/dep/echarts/map/js/china.js"></script>
+		<!-- 新 Bootstrap5 核心 CSS 文件 -->
+		<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+		 
+		<!--  popper.min.js 用于弹窗、提示、下拉菜单 -->
+		<script src="https://cdn.staticfile.org/popper.js/2.9.3/umd/popper.min.js"></script>
+		 
+		<!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
+		<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<title>数据界面</title>
+	</head>
+	<body class="fill-parent" dg-chart-auto-resize="true"
+	dg-chart-options="{title:{show:false},legend:{top:0},grid:{top:25}}"
+	dg-chart-theme="{color:'#F0F0F0',actualBackgroundColor:'#142233'}">
+	<div class="head">
+		<div class="title"><label>重庆大学计算机学院新生报到情况</label></div>
+	</div>
+	<div class="content">
+		<div class="layout layout-left-top">
+			<div class="panel panel-bg no-title-bg">
+				<div class="title"><label>男女占比</label></div>
+				<div class="chart" dg-chart-widget="">
+					<div id="NanNvZhanBi" style="width:100%;height:100%;"></div>
+					<script type="text/javascript" src="./js/NanNvZhanBi.js"></script>
+				</div>
+			</div>
+		</div>
+		<div class="layout layout-left-center">
+			<div class="panel">
+				<div class="title"><label>爱好统计</label></div>
+				<div class="chart" dg-chart-widget="">
+					<div id="AiHaoTongJi" style="width:100%;height:100%;"></div>
+					<script type="text/javascript" src="./js/AiHaoTongJi.js"></script>
+				</div>
+			</div>
+		</div>
+		<div class="layout layout-left-bottom">
+			<div class="panel">
+				<div class="title"><label>年龄占比</label></div>
+				<div class="chart" dg-chart-widget="">
+					<div id="NianLingZhanBi" style="width:100%;height:100%;"></div>
+					<script type="text/javascript" src="./js/NianLingZhanBi.js"></script>
+				</div>
+			</div>
+		</div>
+		<div class="layout layout-center">
+			<div class="layout layout-center-main">
+				<div class="layout layout-center-top">
+					<div class="panel no-title-bg">
+						<div class="chart" dg-chart-widget="">
+							<div id="NanNvRenShu" style="width:100%;height:100%;"></div>
+							<script type="text/javascript" src="./js/NanNvRenShu.js"></script>
+						</div>
+					</div>
+				</div>
+				<div class="layout layout-center-bottom">
+					<div class="panel no-title-bg">
+						<div class="chart" dg-chart-widget="">
+							<div id="DiTu" style="width:100%;height:100%;"></div>
+							<script type="text/javascript" src="./js/DiTu.js"></script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="layout layout-right-top">
+			<div class="panel">
+				<div class="title"><label>专业占比</label></div>
+				<div class="chart" dg-chart-widget="">
+					<div id="ZhuanYeZhanBi" style="width:100%;height:100%;"></div>
+					<script type="text/javascript" src="./js/ZhuanYeZhanBi.js"></script>
+				</div>
+			</div>
+		</div>
+		<div class="layout layout-right-center">
+			<div class="panel">
+				<div class="title"><label>报道人数占比</label></div>
+				<div class="chart" dg-chart-widget="">
+					<div id="BaoDaoRenShuZhanBi" style="width:100%;height:100%;"></div>
+					<script type="text/javascript" src="./js/BaoDaoRenShuZhanBi.js"></script>
+				</div>
+			</div>
+		</div>
+		<div class="layout layout-right-bottom">
+			<div class="panel">
+				<div class="title"><label>学生行为习惯分析</label></div>
+				<div class="chart" dg-chart-widget="">
+					<div id="XingWeiXiGuan" style="width:100%;height:100%;"></div>
+					<script type="text/javascript" src="./js/XueShengXingWeiXiGuanFenXi.js"></script>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="app">
+			
+	</div>
+	<script>
+		var app = new Vue({
+		el : '#app',
+		data() {
+		return{
+			timer:null
+		}
+		},
+		// 在 `methods` 对象中定义方法
+		methods : {
+			//每隔一段时间调用
+			update : function() {
+				axios
+			  .get('student/getSexNum')
+			  .then(function (response){
+				//修改男女人数及总人数
+				let sexArr=response.data.data;
+				option_NanNvRenShu.series[0].data=[sexArr[0]+sexArr[1],sexArr[0],sexArr[1]];
+				Chart_NanNvRenShu.setOption(option_NanNvRenShu);
+				//修改男女占总人数的比例
+				let menPercent=Math.round(sexArr[0]*100/(sexArr[0]+sexArr[1]));
+				option_NanNvZhanBi.series[0].data[0].value=menPercent;
+				option_NanNvZhanBi.series[0].data[1].value=100-menPercent;
+				Chart_NanNvZhanBi.setOption(option_NanNvZhanBi);
+				//修改报到人数占比
+				getvalue=[Math.round((sexArr[0]+sexArr[1])*100/studentNum)];
+				option_BaoDaoRenShuZhanBi.title.text=getvalue+"%";
+				option_BaoDaoRenShuZhanBi.series[0].data=getvalue;
+				option_BaoDaoRenShuZhanBi.tooltip={
+					formatter: function (params) {
+						return '<span style="color: #fff;">人数占比：'+ getvalue + '%</span>';
+					}
+				}
+				Chart_BaoDaoRenShuZhanBi.setOption(option_BaoDaoRenShuZhanBi);
+			  }
+				  )
+			  .catch(function (error) { // 请求失败处理
+				console.log(error);
+			  });
+
+			  //修改各专业人数
+			  axios
+			  .get('student/getMajorNum')
+			  .then(function (response){
+				option_ZhuanYeZhanBi.series[0].data=response.data.data;
+				Chart_ZhuanYeZhanBi.setOption(option_ZhuanYeZhanBi);
+			  }
+				  )
+			  .catch(function (error) { // 请求失败处理
+				console.log(error);
+			  });
+
+			  //修改各省份人数
+			  axios
+			  .get('student/getProvinceNum')
+			  .then(function (response){
+				outvalue=response.data.data.concat([0]);
+				outdata=[];
+				for (var i = 0; i < outname.length; i++) {
+					outdata.push({
+						name: outname[i],
+						value: outvalue[i]
+					})
+				}
+				option_DiTu.series[0].data=outdata;
+				option_DiTu.series[1].data=convertData(outdata);
+				Chart_DiTu.setOption(option_DiTu);
+			  }
+				  )
+			  .catch(function (error) { // 请求失败处理
+				console.log(error);
+			  });
+
+			  //修改各年龄段人数
+			  axios
+			  .get('student/getAgeNum')
+			  .then(function (response){
+				for (let i=0;i<5;i++){
+					option_NianLingZhanBi.series[0].data[i].value=response.data.data[i];
+				}
+				Chart_NianLingZhanBi.setOption(option_NianLingZhanBi);
+			  }
+				  )
+			  .catch(function (error) { // 请求失败处理
+				console.log(error);
+			  });
+
+			  //修改各爱好人数
+			  axios
+			  .get('student/getHobbyNum')
+			  .then(function (response){
+				drawChart_AiHaoTongJi(response.data.data);
+				option_XingWeiXiGuan.series[0].data[0]=response.data.data;
+				Chart_XingWeiXiGuan.setOption(option_XingWeiXiGuan);
+			  }
+				  )
+			  .catch(function (error) { // 请求失败处理
+				console.log(error);
+			  });
+			}
+		},
+
+		//定时刷新
+		mounted() {
+		this.update();
+		this.timer = setInterval(() => {
+		  setInterval(this.update(), 0);
+		}, 2000);
+		},
+		beforeDestroy() {
+			clearInterval(this.timer);
+			this.timer = null;
+		}
+		})
+	</script>
+	
+	
+	</body>
+</html>

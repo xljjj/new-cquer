@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqu.NewCQUer.mapper.StudentMapper">
+  
+  	<!-- 向数据库中添加学生 -->
+  	<!-- 添加学生必填信息 -->
+  	<insert id="addStudentRequired" parameterType="com.cqu.NewCQUer.pojo.Student">
+  		INSERT INTO `project2`.`student_required` (`account`, `password`, `name`, `age`, `sex`, `major`, `province`, `hobby`) 
+  	VALUES (#{account}, #{password}, #{name}, #{age}, #{sex}, #{major}, #{province}, #{hobby});
+  	</insert>
+  	<!-- 添加学生选填信息 -->
+  	<insert id="addStudentOptional" parameterType="com.cqu.NewCQUer.pojo.Student">
+  		INSERT INTO `project2`.`student_optional` (`account`, `phone`, `qq`, `wx`, `email`, `roommatepre`, `description`) 
+	VALUES (#{account}, #{phone}, #{qq}, #{wx}, #{email}, #{roommatepre}, #{description});
+  	</insert>
+
+	<!-- 向数据库中删除学生 -->
+  	<delete id="deleteStudent" parameterType="com.cqu.NewCQUer.pojo.Student">
+  		DELETE student_required,student_optional from student_required 
+	LEFT JOIN student_optional ON student_required.account=student_optional.account WHERE student_required.account=#{account};
+  	</delete>
+	
+	<!-- 向数据库中更新学生信息 -->
+	<update id="updateStudent" parameterType="com.cqu.NewCQUer.pojo.Student">
+		UPDATE student_required a , student_optional b SET a.account=#{account},a.password=#{password},a.name=#{name},
+	a.age=#{age},a.sex=#{sex},a.major=#{major},a.province=#{province},a.hobby=#{hobby},
+	b.account=#{account},b.phone=#{phone},b.qq=#{qq},b.wx=#{wx},b.email=#{email},b.roommatepre=#{roommatepre},b.description=#{description}
+	WHERE a.account = b.account AND a.account = #{account};
+	</update>
+	
+	<!-- 查询所有学生信息 -->
+	<select id="findAllStudent" resultType="com.cqu.NewCQUer.pojo.Student">
+		SELECT * FROM student_required a, student_optional b WHERE a.account = b.account;
+	</select>
+	
+	<!-- 查询某一省份所有学生的信息 -->
+	<select id="findAllStudentByProvince" parameterType = "String" resultType="com.cqu.NewCQUer.pojo.Student">
+		SELECT * FROM student_required a, student_optional b WHERE a.account = b.account AND a.province = #{province};
+	</select>
+
+	<!-- 由学号查询学生信息 -->
+	<select id="findStudentByAccount" parameterType="String" resultType="com.cqu.NewCQUer.pojo.Student">
+		SELECT * FROM student_required a, student_optional b WHERE a.account = b.account And a.account = #{account};
+	</select>
+	 
+	<!-- 由性别查看学生数量 -->
+	<select id="countSexNumber" parameterType="String" resultType="int">
+		select count(*) from student_required where sex=#{sex};
+	</select>
+	
+	<!-- 由专业查看学生数量 -->
+	<select id="countMajorNumber" parameterType="String" resultType="int">
+		select count(*) from student_required where major=#{major};
+	</select>
+	
+	<!-- 由年龄查看学生数量 -->
+	<select id="countAgeNumber" resultType="int">
+		select count(*) from student_required where age>=#{age1} and #{age2}>=age;
+	</select>
+	
+	<!-- 由省份查看学生数量 -->
+	<select id="countProvinceNumber" parameterType="string" resultType="int">
+		select count(*) from student_required where province=#{province};
+	</select>
+	
+	<!-- 查询同省份学生信息 -->
+	<select id="findSameProvince" parameterType="string" resultType="com.cqu.NewCQUer.pojo.Student">
+		select * from student_required a,student_optional b where province=#{province} and a.account = b.account;
+	</select>
+	
+	<!-- 向chat表单中添加学生信息 -->
+  	<insert id="addStudentChat" parameterType="com.cqu.NewCQUer.pojo.Student">
+  		INSERT INTO `project2`.`chat` (`account`, `name`,`sex`, `province`, `hobby`,
+	`phone`, `qq`, `wx`, `email`, `description`) 
+  	VALUES (#{account}, #{name}, #{sex}, #{province}, #{hobby},#{phone}, #{qq}, #{wx}, #{email}, #{description});
+  	</insert>
+	
+	<!-- 向chat表单中删除学生信息 -->
+  	<delete id="deleteStudentChat" parameterType="com.cqu.NewCQUer.pojo.Student">
+  		delete from `project2`.`chat` where account = #{account};
+  	</delete>
+  	
+  	<!-- 查询chat表中所有学生的信息-->
+	<select id="findAllStudentChat" resultType="com.cqu.NewCQUer.pojo.Student">
+		SELECT * FROM chat;
+	</select>
+
+	<!-- 从chat表中查找特定学号的学生-->
+	<select id="findStudentChatByAccount" resultType="com.cqu.NewCQUer.pojo.Student">
+		SELECT * FROM chat WHERE account = #{account};
+	</select>
+
+	<!-- 把宿舍四人信息填入dormitory表单 -->
+  	<insert id="addDormitory" parameterType="com.cqu.NewCQUer.pojo.Dormitory">
+  		INSERT INTO `project2`.`dormitory` (`student1_account`, `student1_name`, `student2_account`, 
+ 	`student2_name`, `student3_account`, `student3_name`, `student4_account`, `student4_name`) 
+ 	VALUES (#{student1_account},#{student1_name},#{student2_account},#{student2_name},
+ 	#{student3_account},#{student3_name},#{student4_account},#{student4_name});
+  	</insert>
+  	
+  	
+  	<!-- 查询dormitory表单中所有宿舍的信息-->
+	<select id="findAllDorm" resultType="com.cqu.NewCQUer.pojo.Dormitory">
+		SELECT * FROM dormitory;
+	</select>
+
+
+</mapper>
