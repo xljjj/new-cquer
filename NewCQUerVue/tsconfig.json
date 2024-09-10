@@ -10,6 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "suppressImplicitAnyIndexErrors": true,
+    "ignoreDeprecations": "5.0",  // 忽略 vue-tsc 的警告(使用弃用功能)
     "useDefineForClassFields": true,
     "sourceMap": true,
     "baseUrl": ".",
